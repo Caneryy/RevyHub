@@ -9,13 +9,13 @@ export function instanceEntry(id: string, executable: xdr.ContractExecutable, la
   return new xdr.LedgerEntry({
     lastModifiedLedgerSeq: lastModified,
     data: xdr.LedgerEntryData.contractData(new xdr.ContractDataEntry({
-      ext: new xdr.ExtensionPoint(0),
+      ext: new xdr.ExtensionPoint(),
       contract: new Address(id).toScAddress(),
       key: xdr.ScVal.scvLedgerKeyContractInstance(),
       durability: xdr.ContractDataDurability.persistent(),
-      val: xdr.ScVal.scvContractInstance(new xdr.ScContractInstance({ executable }))
+      val: xdr.ScVal.scvContractInstance(new xdr.ScContractInstance({ executable, storage: null }))
     })),
-    ext: new xdr.LedgerEntryExt(0)
+    ext: new xdr.LedgerEntryExt()
   }).toXDR("base64");
 }
 
@@ -23,11 +23,11 @@ export function codeEntry(digest: Buffer, code: Buffer, lastModified = 20): stri
   return new xdr.LedgerEntry({
     lastModifiedLedgerSeq: lastModified,
     data: xdr.LedgerEntryData.contractCode(new xdr.ContractCodeEntry({
-      ext: new xdr.ContractCodeEntryExt(0),
+      ext: new xdr.ContractCodeEntryExt(),
       hash: digest,
       code
     })),
-    ext: new xdr.LedgerEntryExt(0)
+    ext: new xdr.LedgerEntryExt()
   }).toXDR("base64");
 }
 
