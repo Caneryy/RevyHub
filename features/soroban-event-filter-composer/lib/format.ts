@@ -1,4 +1,4 @@
-import type { EventFilterReport } from "./types";
+import type { EventFilterReport } from "../types";
 
 export function stableJson(value: unknown): string {
   const normalize = (item: unknown): unknown => {
