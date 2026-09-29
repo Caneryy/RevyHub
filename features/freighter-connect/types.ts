@@ -9,6 +9,8 @@ export interface FreighterApi {
   setAllowed?: () => Promise<boolean>;
   getPublicKey?: () => Promise<string>;
   getNetwork?: () => Promise<string>;
+  addAccountListener?: (callback: (account: string) => void) => void;
+  removeAccountListener?: (callback: (account: string) => void) => void;
 }
 
 export interface WalletSnapshot {

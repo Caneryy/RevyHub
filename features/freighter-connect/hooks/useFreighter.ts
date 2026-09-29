@@ -1,7 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { subscribeFreighterAccountChanges } from "@/features/freighter-connect/lib/freighterAccount";
 import { readWallet, requestAccess } from "@/features/freighter-connect/lib/freighter";
+import { readFreighterApi } from "@/features/freighter-connect/schema";
 import type {
   FreighterErrorCode,
   WalletSnapshot
@@ -27,15 +29,28 @@ export function useFreighter() {
 
   useEffect(() => {
     let active = true;
+    let unsubscribe: (() => void) | undefined;
+
+    const syncWallet = () => {
+      void readWallet().then((result) => {
+        if (active) setState(toState(result));
+      });
+    };
 
     // The extension injects itself asynchronously, so the wallet cannot be
     // read during render.
-    void readWallet().then((result) => {
-      if (active) setState(toState(result));
-    });
+    syncWallet();
+
+    const api = readFreighterApi();
+    if (api.ok) {
+      unsubscribe = subscribeFreighterAccountChanges(api.value, () => {
+        syncWallet();
+      });
+    }
 
     return () => {
       active = false;
+      unsubscribe?.();
     };
   }, []);
 
