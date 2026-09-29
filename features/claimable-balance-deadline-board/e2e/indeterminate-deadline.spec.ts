@@ -13,6 +13,6 @@ test("keeps a nested predicate undated and displays its structure", async ({ pag
   await expect(undated).toBeVisible();
   await expect(undated.getByText("Any condition")).toBeVisible();
   await expect(undated.getByText("All conditions")).toBeVisible();
-  await expect(undated.getByText("Not")).toBeVisible();
+  await expect(undated.getByText("Not", { exact: true })).toBeVisible();
   await expect(page.getByRole("region", { name: "Dated conditions" })).toHaveCount(0);
 });
