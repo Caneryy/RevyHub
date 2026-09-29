@@ -8,7 +8,7 @@ it("accepts the sample and rejects a secret without echoing it", () => {
   expect(parseInput(sample).ok).toBe(true);
   const seed = Keypair.fromRawEd25519Seed(Buffer.alloc(32, 8)).secret();
   const secret = parseInput({ uri: seed, policy: sample.policy });
-  expect(!secret.ok && secret.code).toBe("invalid_uri");
+  expect(secret).toMatchObject({ ok: false, code: "invalid_uri" });
   expect(JSON.stringify(secret)).not.toContain(seed);
-  expect(!parseInput({ uri: sample.uri, policy: "" }).ok && parseInput({ uri: sample.uri, policy: "" }).code).toBe("invalid_policy");
+  expect(parseInput({ uri: sample.uri, policy: "" })).toMatchObject({ ok: false, code: "invalid_policy" });
 });

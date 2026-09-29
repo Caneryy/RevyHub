@@ -12,6 +12,6 @@ it("accepts the sample policy and converts decimals to stroops", () => {
 });
 
 it("rejects broken JSON and an empty destination list", () => {
-  expect(!parsePolicy(brokenPolicyText).ok && parsePolicy(brokenPolicyText).code).toBe("invalid_policy");
+  expect(parsePolicy(brokenPolicyText)).toMatchObject({ ok: false, code: "invalid_policy" });
   expect(parsePolicy(emptyDestinationPolicyText).ok).toBe(false);
 });

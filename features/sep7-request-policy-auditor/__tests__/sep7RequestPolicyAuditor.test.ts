@@ -12,7 +12,7 @@ it("accepts the sample and still returns verdicts when a callback host is blocke
 });
 
 it("returns parse and policy errors before any verdict", () => {
-  expect(!auditRequest(malformedUri, sample.policy).ok && auditRequest(malformedUri, sample.policy).code).toBe("invalid_uri");
-  expect(!auditRequest(txOperationUri, sample.policy).ok && auditRequest(txOperationUri, sample.policy).code).toBe("unsupported_operation");
-  expect(!auditRequest(sample.uri, brokenPolicyText).ok && auditRequest(sample.uri, brokenPolicyText).code).toBe("invalid_policy");
+  expect(auditRequest(malformedUri, sample.policy)).toMatchObject({ ok: false, code: "invalid_uri" });
+  expect(auditRequest(txOperationUri, sample.policy)).toMatchObject({ ok: false, code: "unsupported_operation" });
+  expect(auditRequest(sample.uri, brokenPolicyText)).toMatchObject({ ok: false, code: "invalid_policy" });
 });

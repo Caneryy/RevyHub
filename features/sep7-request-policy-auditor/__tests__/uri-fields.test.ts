@@ -14,7 +14,7 @@ it("reads a pay request and keeps a plus sign in the memo", () => {
 });
 
 it("rejects a non-uri and a transaction operation", () => {
-  expect(!parseSep7Uri(malformedUri).ok && parseSep7Uri(malformedUri).code).toBe("invalid_uri");
-  expect(!parseSep7Uri(txOperationUri).ok && parseSep7Uri(txOperationUri).code).toBe("unsupported_operation");
+  expect(parseSep7Uri(malformedUri)).toMatchObject({ ok: false, code: "invalid_uri" });
+  expect(parseSep7Uri(txOperationUri)).toMatchObject({ ok: false, code: "unsupported_operation" });
   expect(!parseSep7Uri("web+stellar:pay?destination=SABC").ok).toBe(true);
 });
