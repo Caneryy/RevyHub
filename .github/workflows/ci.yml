@@ -37,7 +37,7 @@ jobs:
         run: npm run lint
 
       - name: Test with coverage
-        run: set -o pipefail; npm run test:coverage | tee coverage/coverage.txt
+        run: set -o pipefail; mkdir -p coverage && npm run test:coverage | tee coverage/coverage.txt
 
       - name: Publish coverage summary
         if: ${{ always() && hashFiles('coverage/coverage.txt') != '' }}
