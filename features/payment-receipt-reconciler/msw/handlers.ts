@@ -1,4 +1,4 @@
-import { http, HttpResponse } from "msw";
+import { http, HttpResponse, type JsonBodyType } from "msw";
 import {
   failedHash,
   failedTransaction,
@@ -33,9 +33,9 @@ const TESTNET = "https://horizon-testnet.stellar.org";
 
 function txHandlers(
   hash: string,
-  transaction: unknown,
-  operations: unknown,
-  effects: unknown
+  transaction: JsonBodyType,
+  operations: JsonBodyType,
+  effects: JsonBodyType
 ) {
   return [
     http.get(`${TESTNET}/transactions/${hash}`, () => HttpResponse.json(transaction)),
