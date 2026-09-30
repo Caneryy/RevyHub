@@ -25,8 +25,14 @@ function summarizeLedgerKey(key: xdr.LedgerKey): string {
     switch (kind) {
       case "account":
         return `account:${key.account().accountId().ed25519().toString("hex").slice(0, 8)}`;
-      case "contractData":
-        return `contractData:${key.contractData().contract().toString("hex").slice(0, 12)}`;
+      case "contractData": {
+        const address = key.contractData().contract();
+        const bytes =
+          address.switch().name === "scAddressTypeContract"
+            ? address.contractId()
+            : address.accountId().ed25519();
+        return `contractData:${bytes.toString("hex").slice(0, 12)}`;
+      }
       case "contractCode":
         return `contractCode:${key.contractCode().hash().toString("hex").slice(0, 12)}`;
       default:
