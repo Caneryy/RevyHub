@@ -8,6 +8,7 @@ const base = {
   homeDomain: "issuer.example",
   tomlUrl: "https://issuer.example/.well-known/stellar.toml",
   network: "testnet",
+  regulatedStatus: "not_regulated",
   approvalServer: null,
   approvalCriteria: "KYC",
   regulatedFieldPresent: true,
