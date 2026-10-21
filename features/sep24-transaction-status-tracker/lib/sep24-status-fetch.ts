@@ -1,5 +1,8 @@
 import { err, ok, type Result } from "@/core/result/result";
-import { toSep24TransactionStatusTrackerErrorCode } from "@/features/sep24-transaction-status-tracker/lib/sep24TransactionStatusTracker.errors";
+import {
+  toSep24TransactionStatusTrackerErrorCode,
+  type Sep24FetchErrorCode
+} from "@/features/sep24-transaction-status-tracker/lib/sep24TransactionStatusTracker.errors";
 import type { Sep24Kind } from "@/features/sep24-transaction-status-tracker/types";
 
 export interface Sep24TransactionRecord {
@@ -18,7 +21,7 @@ export async function fetchSep24Transaction(
   token: string,
   fetchImpl: typeof fetch = globalThis.fetch,
   signal?: AbortSignal
-): Promise<Result<Sep24TransactionRecord, "unauthorized" | "transaction_not_found" | "request_failed">> {
+): Promise<Result<Sep24TransactionRecord, Sep24FetchErrorCode>> {
   let response: Response;
   try {
     response = await fetchImpl(`${transferServer}/transactions/${encodeURIComponent(transactionId)}`, {
