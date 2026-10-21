@@ -50,7 +50,7 @@ export class TxrepReadError extends Error {
 
 export function xdrToTxrep(raw: string): string {
   const envelope = xdr.TransactionEnvelope.fromXDR(raw.trim(), "base64");
-  assertSupported(envelope);
+  assertSupported(envelope as unknown as { arm: () => unknown });
   return emit(xdr.TransactionEnvelope as unknown as XdrType, envelope, "").join("\n");
 }
 
@@ -414,12 +414,22 @@ function formatSignerKey(value: UnionValue): string {
   throw new TxrepReadError("unsupported signer");
 }
 
+function decodeStrKey(decode: (value: string) => Buffer, raw: string): Buffer | null {
+  try {
+    return decode(raw);
+  } catch {
+    return null;
+  }
+}
+
 function parseSignerKey(raw: string): unknown {
   if (StrKey.isValidEd25519PublicKey(raw)) {
     return xdr.SignerKey.signerKeyTypeEd25519(StrKey.decodeEd25519PublicKey(raw));
   }
-  if (StrKey.isValidPreAuthTx(raw)) return xdr.SignerKey.signerKeyTypePreAuthTx(StrKey.decodePreAuthTx(raw));
-  if (StrKey.isValidSha256Hash(raw)) return xdr.SignerKey.signerKeyTypeHashX(StrKey.decodeSha256Hash(raw));
+  const preAuth = decodeStrKey(StrKey.decodePreAuthTx, raw);
+  if (preAuth) return xdr.SignerKey.signerKeyTypePreAuthTx(preAuth);
+  const hashX = decodeStrKey(StrKey.decodeSha256Hash, raw);
+  if (hashX) return xdr.SignerKey.signerKeyTypeHashX(hashX);
   if (StrKey.isValidSignedPayload(raw)) {
     return xdr.SignerKey.signerKeyTypeEd25519SignedPayload(
       xdr.SignerKeyEd25519SignedPayload.fromXDR(StrKey.decodeSignedPayload(raw)) as never
@@ -447,7 +457,7 @@ function parseAsset(raw: string, unionName: string): unknown {
   }
   if (raw.endsWith(":lp")) {
     if (unionName !== "TrustLineAsset") throw new TxrepReadError("bad asset");
-    return xdr.TrustLineAsset.assetTypePoolShare(parseHex(raw.slice(0, -3)));
+    return xdr.TrustLineAsset.assetTypePoolShare(parseHex(raw.slice(0, -3)) as unknown as xdr.PoolId);
   }
   const split = splitCode(raw);
   const asset = new Asset(unescapeCode(split.code).toString("utf8").replace(/\0+$/g, ""), split.issuer);
